@@ -1,10 +1,10 @@
-# 🎥 VidHub - Video Downloader & Media Archiver
+#  VidHub - Video Downloader & Media Archiver
 
 **Platform universal untuk mengarsipkan dan mengkonversi media dari berbagai sumber streaming**
 
 ---
 
-## 📋 Daftar Isi
+##  Daftar Isi
 
 - [Deskripsi Proyek](#deskripsi-proyek)
 - [Fitur Utama](#fitur-utama)
@@ -20,7 +20,7 @@
 
 ---
 
-## 🎯 Deskripsi Proyek
+##  Deskripsi Proyek
 
 ### Tujuan Proyek
 VidHub adalah aplikasi web untuk mengunduh, mengkonversi, dan mengarsipkan video dari berbagai platform streaming (YouTube, Facebook, TikTok, Instagram, Twitter, Vimeo, dll.) ke format MP4, WEBM, atau MP3.
@@ -33,14 +33,14 @@ VidHub adalah aplikasi web untuk mengunduh, mengkonversi, dan mengarsipkan video
 5. **Privacy & Security** - Proses on-premise tanpa mengirim data ke server eksternal
 
 ### Use Cases
-- 👨‍🎓 **Pendidik**: Menyiapkan materi pembelajaran offline untuk kelas
-- 🎓 **Siswa**: Mengunduh tutorial dan referensi pelajaran
-- 🎨 **Content Creator**: Membackup karya sendiri
-- 📚 **Peneliti**: Mengarsipkan sumber referensi video
+-  **Pendidik**: Menyiapkan materi pembelajaran offline untuk kelas
+-  **Siswa**: Mengunduh tutorial dan referensi pelajaran
+-  **Content Creator**: Membackup karya sendiri
+-  **Peneliti**: Mengarsipkan sumber referensi video
 
 ---
 
-## ✨ Fitur Utama
+##  Fitur Utama
 
 ### 1. **Multi-Platform Support**
 - YouTube & YouTube Music
@@ -49,7 +49,6 @@ VidHub adalah aplikasi web untuk mengunduh, mengkonversi, dan mengarsipkan video
 - Instagram
 - Twitter/X
 - Vimeo
-- Extensible untuk platform lainnya
 
 ### 2. **Multiple Output Formats**
 - **Video**: MP4, WEBM, MKV
@@ -82,7 +81,7 @@ VidHub adalah aplikasi web untuk mengunduh, mengkonversi, dan mengarsipkan video
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+##  Teknologi yang Digunakan
 
 ### Backend
 - **Language**: Go 1.21
@@ -110,7 +109,7 @@ VidHub adalah aplikasi web untuk mengunduh, mengkonversi, dan mengarsipkan video
 
 ---
 
-## 📁 Struktur Proyek
+##  Struktur Proyek
 
 ```
 videoDownload/
@@ -138,12 +137,7 @@ videoDownload/
 │   ├── pkg/                    # Shared packages
 │   │   ├── logger/            # Zap logger wrapper
 │   │   ├── middleware/        # HTTP middleware
-│   │   ├── validator/         # Input validation
-│   │   ├── errorutil/         # Error handling
-│   │   ├── quality/           # Quality detection
-│   │   ├── ratelimit/         # Rate limit logic
-│   │   └── auth/              # Authentication (stub)
-│   ├── test_cleanup_test.go    # Storage cleanup unit tests
+│   │   └── validator/         # Input validation
 │   └── server                  # Compiled binary
 │
 ├── frontend/                    # Web Interface
@@ -157,7 +151,6 @@ videoDownload/
 ├── docker-compose.yml          # Multi-service orchestration
 ├── Dockerfile                  # Backend container
 ├── Dockerfile.python           # Python worker container
-├── docker-env                  # Docker environment variables
 ├── nginx.conf                  # Reverse proxy config (optional)
 │
 ├── downloads/                  # Downloaded files storage
@@ -181,7 +174,7 @@ videoDownload/
 
 ---
 
-## 🚀 Instalasi & Setup
+##  Instalasi & Setup
 
 ### Persyaratan Sistem
 
@@ -278,7 +271,7 @@ python3 -u worker.py
 ```
 
 
-## 💻 Cara Menggunakan
+##  Cara Menggunakan
 
 ### 1. Cara Pakai Aplikasi (User)
 
@@ -650,11 +643,11 @@ http.Get("http://python-worker:5000/api/video/info?url=...")
 - `ManualCleanup()` - Force cleanup (testing)
 
 **Features:**
-- ✅ Automatic cleanup dengan TTL
-- ✅ Background cleanup routine
-- ✅ Safe logging with nil checks
-- ✅ Non-blocking stop signal
-- ✅ Proper error handling
+-  Automatic cleanup dengan TTL
+-  Background cleanup routine
+-  Safe logging with nil checks
+-  Non-blocking stop signal
+-  Proper error handling
 
 **Cleanup Flow:**
 ```
@@ -800,7 +793,7 @@ isValidURL(url)
 
 ---
 
-## ⚙️ Konfigurasi
+##  Konfigurasi
 
 ### Environment Variables
 
@@ -922,17 +915,17 @@ RATELIMIT_REQUESTS_PER_MINUTE=30   # Ketat
 
 ---
 
-## 💡 Tips & Catatan Penting
+##  Tips & Catatan Penting
 
 ### 1. **File Cleanup System**
 
-✅ **Bagaimana Cleanup Bekerja:**
+ **Bagaimana Cleanup Bekerja:**
 - File yang diunduh di-track dalam memory map
 - Setiap file punya `ExpiresAt` timestamp
 - Background routine cleanup berjalan setiap `STORAGE_CLEANUP_INTERVAL` detik
 - File expired akan dihapus otomatis dari disk
 
-⚠️ **Important Notes:**
+ **Important Notes:**
 - Cleanup adalah **in-memory**, bukan persistent database
 - Jika server restart, tracking info hilang (file baru akan dibuat)
 - File lama di disk tidak otomatis di-cleanup tanpa restart
@@ -947,19 +940,19 @@ RATELIMIT_REQUESTS_PER_MINUTE=30   # Ketat
 
 ### 2. **Quota & Rate Limiting**
 
-✅ **Rate Limiting:**
+ **Rate Limiting:**
 - Cegah abuse & DDoS attacks
 - Per-IP basis (berdasarkan IP address)
 - Jika melalui proxy, pastikan `X-Forwarded-For` header properly set
 - Default 60 requests/menit dengan burst size 10
 
-✅ **Download Quota:**
+ **Download Quota:**
 - Batasi total volume download per IP per hari
 - Reset otomatis setiap hari pada `QUOTA_RESET_HOUR:QUOTA_RESET_MINUTE`
 - Cocok untuk public/shared service
 - Default 100MB per IP per hari
 
-⚠️ **Considerations:**
+ **Considerations:**
 - Jika server di belakang proxy, IP detection bisa salah
 - Shared WiFi/office akan membagi quota satu IP
 - Audio-only downloads lebih hemat kuota dibanding video
@@ -968,7 +961,7 @@ RATELIMIT_REQUESTS_PER_MINUTE=30   # Ketat
 
 ### 3. **Error Handling**
 
-✨ **Frontend Error Messages:**
+ **Frontend Error Messages:**
 User-friendly error messages untuk berbagai kasus:
 - **Quota penuh**: "Kuota unduhan harian sudah terpenuhi..."
 - **File terlalu besar**: "File media ini terlalu besar (max 100MB)..."
@@ -997,24 +990,24 @@ Clean separation of concerns memudahkan maintenance & testing.
 
 ### 5. **Security Best Practices**
 
-✅ **Domain Whitelisting:**
+ **Domain Whitelisting:**
 ```
 ALLOWED_DOMAINS=youtube.com,youtu.be,vimeo.com,...
 ```
 Hanya domain ini yang bisa di-download.
 
-✅ **File Size Validation:**
+ **File Size Validation:**
 ```
 MAX_VIDEO_SIZE_MB=100
 ```
 Reject files yang terlalu besar.
 
-✅ **Filename Sanitization:**
+ **Filename Sanitization:**
 - Max length: `MAX_FILENAME_LENGTH=200`
 - Remove invalid characters
 - Prevent path traversal
 
-✅ **Request Timeouts:**
+ **Request Timeouts:**
 ```
 REQUEST_TIMEOUT=60 (seconds)
 SERVER_TIMEOUT=300 (seconds)
@@ -1051,7 +1044,7 @@ Prevent hanging requests.
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Backend Tidak Bisa Connect ke Python Worker
 
@@ -1173,7 +1166,7 @@ docker-compose restart backend
 
 ---
 
-## 📊 Monitoring & Logging
+##  Monitoring & Logging
 
 ### Check Logs
 
@@ -1206,7 +1199,7 @@ curl -v http://localhost:5000/api/health (internal)
 
 ---
 
-## 📝 License & Credit
+##  License & Credit
 
 **Project**: VidHub - Video Downloader & Media Archiver
 **Version**: 1.0.0
@@ -1221,7 +1214,7 @@ curl -v http://localhost:5000/api/health (internal)
 
 ---
 
-## 🤝 Contributing & Support
+##  Contributing & Support
 
 ### Feature Requests
 - Buat issue dengan label `enhancement`
@@ -1239,7 +1232,7 @@ curl -v http://localhost:5000/api/health (internal)
 
 ---
 
-## 📚 Additional Resources
+##  Additional Resources
 
 - [API.md](API.md) - Detailed API documentation
 
