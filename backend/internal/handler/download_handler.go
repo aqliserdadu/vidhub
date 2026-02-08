@@ -3,7 +3,9 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 
 	"videodownload/internal/model"
 	"videodownload/internal/service"
@@ -180,10 +182,43 @@ func (h *DownloadHandler) GetFile(c *gin.Context) {
 		return
 	}
 
-	// Stream file download
-	c.Header("Content-Disposition", "attachment; filename="+file.Filename)
+	// Set proper Content-Disposition header with filename encoding
+	// Use RFC 5987 for proper handling of unicode and special characters
+	contentDisposition := buildContentDispositionHeader(file.Filename)
+	c.Header("Content-Disposition", contentDisposition)
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(file.FilePath)
 
-	logger.Logger.Info("File downloaded by user", zap.String("file_id", fileID))
+	logger.Logger.Info("File downloaded by user",
+		zap.String("file_id", fileID),
+		zap.String("filename", file.Filename))
+}
+
+// buildContentDispositionHeader builds a proper Content-Disposition header
+// with RFC 5987 encoding for unicode and special characters
+func buildContentDispositionHeader(filename string) string {
+	// Check if filename needs encoding (has non-ASCII or special characters)
+	needsEncoding := false
+	for _, r := range filename {
+		if r > 127 || r == '"' || r == '\\' || r == ';' || r == ',' {
+			needsEncoding = true
+			break
+		}
+	}
+
+	// Also check for spaces - they should be quoted at minimum
+	if strings.ContainsAny(filename, " \t\n\r") {
+		needsEncoding = true
+	}
+
+	if !needsEncoding {
+		// Simple ASCII filename without special characters
+		// Just quote it for safety
+		return fmt.Sprintf(`attachment; filename="%s"`, filename)
+	}
+
+	// Use RFC 5987 encoding for unicode and special characters
+	// Format: filename*=UTF-8''<percent-encoded-filename>
+	encodedFilename := url.QueryEscape(filename)
+	return fmt.Sprintf(`attachment; filename*=UTF-8''%s`, encodedFilename)
 }

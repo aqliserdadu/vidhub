@@ -53,6 +53,14 @@ type DownloadedFile struct {
 	URL       string
 }
 
+// PythonWorkerDownloadResponse represents response from Python worker download endpoint
+// Python worker can return filename in the response for proper file naming
+type PythonWorkerDownloadResponse struct {
+	Filename string `json:"filename"` // Actual filename to save as
+	Message  string `json:"message"`  // Optional message
+	Status   string `json:"status"`   // Optional status
+}
+
 // ErrorResponse represents an API error
 type ErrorResponse struct {
 	Error   string `json:"error"`

@@ -55,7 +55,45 @@ func Load() *model.Config {
 			BurstSize:         getEnvInt("RATELIMIT_BURST_SIZE", 10),
 			CleanupInterval:   getEnvInt("RATELIMIT_CLEANUP_INTERVAL", 1800),
 		},
+		QualityCategories: model.QualityCategoriesConfig{
+			Enabled: parseEnabledQualityCategories(
+				getEnvStr("ENABLED_QUALITY_CATEGORIES", "Audio,FD,SD,HD,FHD"),
+			),
+		},
 	}
+}
+
+// parseEnabledQualityCategories parses comma-separated quality categories from env
+func parseEnabledQualityCategories(categoriesStr string) []string {
+	if categoriesStr == "" {
+		// Default: all categories enabled
+		return []string{"Audio", "FD", "SD", "HD", "FHD"}
+	}
+
+	categories := strings.Split(categoriesStr, ",")
+	var validCategories []string
+
+	validCategoryMap := map[string]bool{
+		"Audio": true,
+		"FD":    true,
+		"SD":    true,
+		"HD":    true,
+		"FHD":   true,
+	}
+
+	for _, cat := range categories {
+		cat = strings.TrimSpace(cat)
+		if validCategoryMap[cat] {
+			validCategories = append(validCategories, cat)
+		}
+	}
+
+	// If no valid categories specified, use default
+	if len(validCategories) == 0 {
+		return []string{"Audio", "FD", "SD", "HD", "FHD"}
+	}
+
+	return validCategories
 }
 
 func getEnvStr(key, defaultVal string) string {

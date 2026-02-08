@@ -17,15 +17,17 @@ import (
 type VideoService struct {
 	pythonWorkerURL string
 	httpClient      *http.Client
+	cfg             *model.Config
 }
 
 // NewVideoService creates a new video service
-func NewVideoService(host string, port int, timeout int) *VideoService {
+func NewVideoService(host string, port int, timeout int, cfg *model.Config) *VideoService {
 	return &VideoService{
 		pythonWorkerURL: fmt.Sprintf("http://%s:%d", host, port),
 		httpClient: &http.Client{
 			Timeout: time.Duration(timeout) * time.Second,
 		},
+		cfg: cfg,
 	}
 }
 
@@ -71,9 +73,15 @@ func (s *VideoService) GetVideoInfo(videoURL string) (*model.VideoInfo, error) {
 func (s *VideoService) parseMetadata(metadata model.VideoMetadata) *model.VideoInfo {
 	formats := []model.FormatOption{}
 
+	// Build set of enabled categories for quick lookup
+	enabledCategoriesMap := make(map[string]bool)
+	for _, cat := range s.cfg.QualityCategories.Enabled {
+		enabledCategoriesMap[cat] = true
+	}
+
 	for _, fmt := range metadata.Formats {
 		format := s.parseFormat(fmt)
-		if format != nil {
+		if format != nil && enabledCategoriesMap[format.Quality] {
 			formats = append(formats, *format)
 		}
 	}

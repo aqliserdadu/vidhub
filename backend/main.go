@@ -50,6 +50,7 @@ func main() {
 		cfg.Python.Host,
 		cfg.Python.Port,
 		cfg.Python.Timeout,
+		cfg,
 	)
 	downloadService := service.NewDownloadService(
 		cfg.Python.Host,

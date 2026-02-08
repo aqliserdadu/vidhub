@@ -22,7 +22,7 @@ services:
 
       # --- Storage Configuration ---
       DOWNLOAD_DIR: /app/downloads
-      MAX_VIDEO_SIZE_MB: 100
+      MAX_VIDEO_SIZE_MB: 1000
       MAX_FILENAME_LENGTH: 200
       STORAGE_CLEANUP_INTERVAL: 3600
       FILE_TTL_SECONDS: 86400
@@ -45,7 +45,7 @@ services:
 
       # --- Quota Limiting ---
       QUOTA_ENABLED: "true"
-      QUOTA_DAILY_LIMIT_MB: 100
+      QUOTA_DAILY_LIMIT_MB: 1000
       QUOTA_RESET_HOUR: 0
       QUOTA_RESET_MINUTE: 0
 
@@ -54,6 +54,16 @@ services:
       RATELIMIT_REQUESTS_PER_MINUTE: 60
       RATELIMIT_BURST_SIZE: 10
       RATELIMIT_CLEANUP_INTERVAL: 1800
+
+      # --- Quality Categories Configuration ---
+      # Control which quality categories are available for download
+      # Options: Audio, FD, SD, HD, FHD (comma-separated, no spaces)
+      # Default: Audio,FD,SD,HD,FHD (all enabled)
+      # Examples:
+      #   - Audio,FD,SD,HD,FHD (all categories)
+      #   - HD,FHD (only high quality HD and FHD)
+      #   - SD,HD,FHD (exclude FD, only SD and above)
+      ENABLED_QUALITY_CATEGORIES: "Audio,FD,SD,HD,FHD"
 
     volumes:
       - ./downloads:/app/downloads
@@ -69,7 +79,7 @@ services:
 
     # --- HARD Resource Limit (Production) ---
     mem_limit: 1g
-    cpus: 1.0
+    cpus: 0.5
     pids_limit: 256
 
     healthcheck:
@@ -99,7 +109,7 @@ services:
 
       # --- Storage Configuration ---
       DOWNLOAD_DIR: /app/downloads
-      MAX_VIDEO_SIZE_MB: 300
+      MAX_VIDEO_SIZE_MB: 1000
       MAX_FILENAME_LENGTH: 200
 
       # --- Logging Configuration ---
@@ -118,7 +128,7 @@ services:
     restart: always
 
     # --- HARD Resource Limit (Production) ---
-    mem_limit: 3g
+    mem_limit: 5g
     cpus: 2.0
     pids_limit: 512
 
