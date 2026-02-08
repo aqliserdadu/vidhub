@@ -129,27 +129,87 @@ func (s *VideoService) parseFormat(rawFmt map[string]interface{}) *model.FormatO
 }
 
 // determineQuality determines video quality based on resolution
+// Categories: Audio, FD (Full Definition 360p), SD (Standard Definition 480p), HD (720p), FHD (1080p)
 func (s *VideoService) determineQuality(format *model.FormatOption) string {
+	// Audio formats
 	if format.VideoCodec == "" || format.VideoCodec == "none" {
 		return "Audio"
 	}
 
+	// Video formats - normalize to 4 quality categories
+	// Extract resolution height from format.Resolution
 	switch format.Resolution {
-	case "3840x2160", "4k":
-		return "4K"
-	case "2560x1440":
-		return "1440p"
-	case "1920x1080":
+	// FHD - 1080p and above
+	case "1920x1080", "1920x1072", "2560x1440", "3840x2160":
 		return "FHD"
-	case "1280x720":
+
+	// HD - 720p
+	case "1280x720", "1280x714":
 		return "HD"
-	case "854x480":
-		return "480p"
-	case "640x360":
-		return "360p"
+
+	// SD - 480p
+	case "854x476", "854x480", "640x480":
+		return "SD"
+
+	// FD - Full Definition (360p to 480p range)
+	case "640x360", "640x356", "640x358", "426x240", "426x238":
+		return "FD"
+
+	// FD - Any resolution below 480p
+	case "256x144", "256x142", "348x196", "360x240", "432x240", "480x270", "512x288":
+		return "FD"
+
+	// Default: determine by height if custom resolution
 	default:
-		return format.Resolution
+		return normalizeByHeight(format.Resolution)
 	}
+}
+
+// normalizeByHeight determines quality category by extracting height from resolution
+func normalizeByHeight(resolution string) string {
+	// Try to extract height from resolution string like "640x360"
+	parts := parseResolution(resolution)
+	if len(parts) < 2 {
+		return "Unknown"
+	}
+
+	height := parseResolutionHeight(parts)
+
+	switch {
+	case height >= 1080:
+		return "FHD"
+	case height >= 720:
+		return "HD"
+	case height >= 480:
+		return "SD"
+	case height >= 360:
+		return "FD"
+	default:
+		return "FD" // Below 360p categorized as FD
+	}
+}
+
+// parseResolution splits resolution string into parts
+func parseResolution(resolution string) []string {
+	var parts []string
+	for i := 0; i < len(resolution); i++ {
+		if resolution[i] == 'x' {
+			parts = append(parts, resolution[:i], resolution[i+1:])
+			break
+		}
+	}
+	return parts
+}
+
+// parseResolutionHeight extracts height value from resolution parts
+func parseResolutionHeight(parts []string) int {
+	if len(parts) < 2 {
+		return 0
+	}
+
+	var height int
+	fmt.Sscanf(parts[1], "%d", &height)
+	return height
 }
 
 // buildOfficialName builds a readable format name
