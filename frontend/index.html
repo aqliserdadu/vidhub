@@ -1,0 +1,1452 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 1. Meta Description (Versi Profesional: Focus pada Trust & Utility) -->
+    <meta
+      name="description"
+      content="VidHub: Alat terpercaya untuk mengarsipkan dan mengonversi video serta audio untuk kebutuhan personal dan edukasi. Cepat, mudah, dan aman."
+    />
+
+    <!-- 2. Meta Keywords (10-12 Kata Relevan) -->
+    <meta
+      name="keywords"
+      content="vidhub, archive video, converter video, alat edukasi, pengarsipan media, convert mp4, backup video online, alat personal, manajemen media, video converter, audio converter"
+    />
+
+    <!-- 3. Robots & Verification -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="VidHub Team" />
+
+    <!-- 4. SEO Title (Versi Natural & Branding) -->
+    <title>VidHub - Convert & Arsip Video Audio untuk Edukasi</title>
+
+    <!-- Font: Inter & Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+
+    <style>
+      :root {
+        /* Color Palette - Deep Space Blue & Trustworthy Indigo */
+        --bg-body: #020617;
+        --bg-glass: rgba(15, 23, 42, 0.6);
+        --bg-glass-hover: rgba(30, 41, 59, 0.7);
+        --border-glass: rgba(255, 255, 255, 0.08);
+        --border-glow: rgba(99, 102, 241, 0.4);
+
+        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        --accent-gradient: linear-gradient(to right, #0ea5e9, #3b82f6);
+
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-highlight: #a5b4fc;
+
+        --success: #10b981;
+        --danger: #ef4444;
+
+        --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-elevation: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        min-height: 100vh;
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Ambient Background */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        mask-image: radial-gradient(
+          circle at center,
+          black 30%,
+          transparent 80%
+        );
+        -webkit-mask-image: radial-gradient(
+          circle at center,
+          black 30%,
+          transparent 80%
+        );
+        z-index: -2;
+        pointer-events: none;
+      }
+
+      .glow-orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(90px);
+        z-index: -1;
+        opacity: 0.2;
+        animation: floatOrb 20s infinite alternate ease-in-out;
+      }
+      .orb-1 {
+        top: -10%;
+        left: -10%;
+        width: 50vw;
+        height: 50vw;
+        background: #312e81;
+      }
+      .orb-2 {
+        bottom: -10%;
+        right: -10%;
+        width: 40vw;
+        height: 40vw;
+        background: #0e7490;
+        animation-delay: -10s;
+      }
+
+      @keyframes floatOrb {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(50px, 50px);
+        }
+      }
+
+      .container-lg {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+      }
+
+      /* Navbar */
+      .modern-navbar {
+        background: rgba(2, 6, 23, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-glass);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar-brand {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .brand-icon {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.8rem;
+      }
+
+      .badge-group {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .badge-modern {
+        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+        border-radius: 99px;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-glass);
+        color: var(--text-muted);
+        transition: var(--transition-smooth);
+      }
+      .badge-modern:hover {
+        border-color: var(--text-highlight);
+        color: var(--text-main);
+      }
+
+      /* Main Content Area */
+      .main-wrapper {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+        flex: 1;
+      }
+
+      /* Hero */
+      .hero-section {
+        text-align: center;
+        margin-bottom: 3rem;
+        animation: fadeInDown 1s ease;
+      }
+      .hero-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+        background: linear-gradient(to bottom right, #fff 30%, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.15;
+      }
+      .hero-subtitle {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      /* Glass Card */
+      .glass-card {
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        box-shadow: var(--shadow-elevation);
+        padding: 2.5rem;
+        margin-bottom: 4rem;
+        animation: fadeInUp 0.8s ease 0.2s backwards;
+        position: relative;
+      }
+      .glass-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: var(--primary-gradient);
+        opacity: 0.6;
+      }
+
+      /* Input Area */
+      .input-wrapper {
+        position: relative;
+        margin-bottom: 1.5rem;
+      }
+      .input-group-lg {
+        display: flex;
+        gap: 0.75rem;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 0.5rem;
+        border-radius: 16px;
+        border: 1px solid var(--border-glass);
+        transition: var(--transition-smooth);
+      }
+      .input-group-lg:focus-within {
+        border-color: var(--border-glow);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .modern-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 1.2rem 1.5rem;
+        font-size: 1.1rem;
+        color: white;
+        font-family: inherit;
+      }
+      .modern-input:focus {
+        outline: none;
+      }
+      .modern-input::placeholder {
+        color: #64748b;
+      }
+
+      .btn-icon {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        width: 50px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn-icon:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .btn-analyze {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 0 2.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      }
+      .btn-analyze:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(79, 70, 229, 0.4);
+      }
+      .btn-analyze:active {
+        transform: translateY(0);
+      }
+      .btn-analyze:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      /* Alerts & Loading */
+      .loading-container {
+        text-align: center;
+        padding: 3rem;
+        display: none;
+      }
+      .loader-ring {
+        display: inline-block;
+        width: 48px;
+        height: 48px;
+      }
+      .loader-ring:after {
+        content: " ";
+        display: block;
+        width: 40px;
+        height: 40px;
+        margin: 4px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        border-color: #6366f1 transparent #6366f1 transparent;
+        animation: ring 1.2s linear infinite;
+      }
+      @keyframes ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .alert-box {
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        display: none;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+        animation: slideDown 0.3s ease-out;
+      }
+      .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+      }
+      .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+      }
+
+      /* Video Result */
+      .video-result-container {
+        display: none;
+        margin-top: 3rem;
+        border-top: 1px solid var(--border-glass);
+        padding-top: 2.5rem;
+        animation: fadeIn 0.5s ease;
+      }
+      .video-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 2.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .thumb-wrapper {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 16/9;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        border: 1px solid var(--border-glass);
+      }
+      .thumb-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+      .thumb-wrapper:hover img {
+        transform: scale(1.05);
+      }
+      .play-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: var(--transition-smooth);
+      }
+      .thumb-wrapper:hover .play-overlay {
+        opacity: 1;
+      }
+      .play-icon {
+        font-size: 3.5rem;
+        color: white;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+      }
+
+      .video-meta {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .video-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+        color: white;
+      }
+      .meta-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+      }
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+      }
+      .meta-item i {
+        color: var(--text-highlight);
+      }
+
+      /* Quality & Format */
+      .filter-tabs {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border-glass);
+        padding-bottom: 1rem;
+        overflow-x: auto;
+      }
+      .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: var(--transition-smooth);
+        white-space: nowrap;
+      }
+      .tab-btn:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .tab-btn.active {
+        background: rgba(99, 102, 241, 0.1);
+        color: #818cf8;
+        font-weight: 600;
+      }
+
+      .format-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+        max-height: 500px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        margin-bottom: 3rem;
+      }
+      .format-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      .format-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .format-list::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      .format-card {
+        position: relative;
+      }
+      .format-card input[type="radio"] {
+        display: none;
+      }
+      .format-tile {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+      .format-tile:hover {
+        border-color: rgba(99, 102, 241, 0.4);
+        background: rgba(255, 255, 255, 0.04);
+        transform: translateY(-2px);
+      }
+      .format-card input[type="radio"]:checked + .format-tile {
+        border-color: #6366f1;
+        background: rgba(30, 41, 59, 0.8);
+        box-shadow:
+          0 0 0 1px #6366f1,
+          0 4px 20px rgba(99, 102, 241, 0.2);
+      }
+      .tile-content {
+        position: relative;
+        z-index: 1;
+      }
+      .format-quality-badge {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .format-details {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .format-size {
+        margin-top: auto;
+        align-self: flex-start;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.3rem 0.7rem;
+        border-radius: 4px;
+      }
+      .check-indicator {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        color: #818cf8;
+        font-size: 1.2rem;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: var(--transition-smooth);
+      }
+      .format-card input[type="radio"]:checked + .format-tile .check-indicator {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      /* Action Area */
+      .action-area {
+        text-align: center;
+        position: relative;
+      }
+      .btn-download {
+        background: linear-gradient(to right, #10b981, #059669);
+        width: 100%;
+        padding: 1.3rem;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 14px;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+        letter-spacing: 0.5px;
+      }
+      .btn-download:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.35);
+        filter: brightness(1.1);
+      }
+      .btn-download:disabled {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.2);
+        cursor: not-allowed;
+        box-shadow: none;
+        border: 1px solid var(--border-glass);
+      }
+
+      /* Features Grid */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+      }
+      .feature-box {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-glass);
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        transition: var(--transition-smooth);
+      }
+      .feature-box:hover {
+        transform: translateY(-5px);
+        border-color: rgba(99, 102, 241, 0.3);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .feature-icon {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Footer - Revamped */
+      .modern-footer {
+        border-top: 1px solid var(--border-glass);
+        padding: 2rem 0 2rem;
+        background: rgba(2, 6, 23, 0.95);
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+        margin-bottom: 3rem;
+      }
+      .footer-col h4 {
+        color: white;
+        font-size: 1.1rem;
+        margin-bottom: 1.2rem;
+        font-family: "Space Grotesk", sans-serif;
+      }
+      .footer-col ul {
+        list-style: none;
+      }
+      .footer-col li {
+        margin-bottom: 0.8rem;
+      }
+      .footer-col a {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: var(--transition-smooth);
+      }
+      .footer-col a:hover {
+        color: var(--text-highlight);
+        padding-left: 5px;
+      }
+
+      .legal-text {
+        font-size: 0.8rem;
+        line-height: 1.6;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 2rem;
+        text-align: center;
+      }
+      .disclaimer-highlight {
+        color: #fcd34d;
+        font-weight: 500;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2.2rem;
+        }
+        .video-grid {
+          grid-template-columns: 1fr;
+        }
+        .input-group-lg {
+          flex-direction: column;
+          background: transparent;
+          border: none;
+          padding: 0;
+        }
+        .modern-input {
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid var(--border-glass);
+          border-radius: 12px;
+          margin-bottom: 0.75rem;
+        }
+        .btn-analyze {
+          width: 100%;
+          justify-content: center;
+          padding: 1.1rem;
+        }
+        .btn-icon {
+          display: none;
+        }
+        .glass-card {
+          padding: 1.5rem;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Ambient Background -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- Navigation -->
+    <nav class="modern-navbar">
+      <div class="container-lg nav-content">
+        <a href="#" class="navbar-brand">
+          <i class="bi bi-collection-play-fill brand-icon"></i>
+          <span>VidHub</span>
+        </a>
+        <div class="badge-group d-none d-md-flex">
+          <span class="badge-modern">Edukasi</span>
+          <span class="badge-modern">Personal Archive</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <div class="container-lg">
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <!-- 5. Struktur On-Page SEO: H1 -->
+          <h1 class="hero-title">Arsip & Konversi Media <br />Tanpa Batas</h1>
+          <p class="hero-subtitle">
+            Alat manajemen media universal untuk
+            <strong style="color: white">arsip pribadi dan keperluan edukasi</strong
+            >. Konversi video dari berbagai platform ke format MP4 atau MP3 dengan mudah.
+          </p>
+        </div>
+
+        <!-- Main Interface Card -->
+        <div class="glass-card">
+          <!-- Input Section -->
+          <div class="input-wrapper">
+            <div class="input-group-lg">
+              <input
+                type="text"
+                class="modern-input"
+                id="videoUrl"
+                placeholder="Tempel tautan video untuk diarsip..."
+                autocomplete="off"
+              />
+              <button
+                class="btn-icon"
+                id="pasteBtn"
+                title="Tempel dari Clipboard"
+              >
+                <i class="bi bi-clipboard"></i>
+              </button>
+              <button class="btn-analyze" type="button" id="fetchBtn">
+                <i class="bi bi-cpu"></i> Proses Media
+              </button>
+            </div>
+            <div class="input-footer" style="margin-top: 0.8rem; display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.85rem;">
+              <span class="secure-tag"
+                ><i class="bi bi-shield-lock-fill"></i> Privasi & Aman</span
+              >
+              <span>Support Format Universal</span>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div id="loadingSpinner" class="loading-container">
+            <div class="loader-ring"></div>
+            <p
+              style="
+                color: var(--text-muted);
+                margin-top: 1rem;
+                font-weight: 500;
+              "
+            >
+              Sedang memproses metadata media...
+            </p>
+          </div>
+
+          <!-- Error Alert -->
+          <div id="errorAlert" class="alert-box alert-danger">
+            <i class="bi bi-exclamation-octagon-fill"></i>
+            <span id="errorMessage">Terjadi kesalahan.</span>
+          </div>
+
+          <!-- Success Alert -->
+          <div id="downloadSuccess" class="alert-box alert-success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Media berhasil diproses! Arsip Anda siap diunduh.</span>
+          </div>
+
+          <!-- Video Result Section -->
+          <div id="videoInfoSection" class="video-result-container">
+            <div class="video-grid">
+              <!-- Thumbnail -->
+              <div class="thumb-wrapper">
+                <img id="videoThumbnail" src="" alt="Thumbnail" />
+                <div class="play-overlay">
+                  <i class="bi bi-play-circle-fill play-icon"></i>
+                </div>
+              </div>
+
+              <!-- Metadata -->
+              <div class="video-meta">
+                <h2 id="videoTitle" class="video-title">Memuat judul...</h2>
+                <div class="meta-info">
+                  <div class="meta-item">
+                    <i class="bi bi-person-video2"></i>
+                    <span id="videoUploader">Sumber</span>
+                  </div>
+                  <div class="meta-item">
+                    <i class="bi bi-clock"></i>
+                    <span id="videoDuration">00:00</span>
+                  </div>
+                </div>
+                <div>
+                  <span
+                    class="badge-modern"
+                    style="
+                      background: rgba(16, 185, 129, 0.1);
+                      color: #34d399;
+                      border-color: rgba(16, 185, 129, 0.2);
+                    "
+                  >
+                    <i class="bi bi-check2-circle"></i> Siap Arsip
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Struktur On-Page SEO: H2 -->
+            <h2 style="font-size: 1.2rem; color: white; margin-bottom: 1.5rem;">Pilih Format Output</h2>
+
+            <!-- Quality Filter -->
+            <div class="filter-tabs">
+              <button class="tab-btn active" data-quality="all">
+                Semua Format
+              </button>
+              <button class="tab-btn" data-quality="FHD">
+                High Quality (1080p)
+              </button>
+              <button class="tab-btn" data-quality="HD">Standar (720p)</button>
+              <button class="tab-btn" data-quality="Audio">Audio Only (MP3)</button>
+            </div>
+
+            <!-- Format List -->
+            <div id="formatList" class="format-list">
+              <!-- Javascript will populate this -->
+            </div>
+
+            <!-- Download Action -->
+            <div class="action-area">
+              <button id="downloadBtn" class="btn-download" disabled>
+                <i class="bi bi-archive"></i> Unduh ke Perangkat
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- End Glass Card -->
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+          <div class="feature-box">
+            <i class="bi bi-diagram-3 feature-icon"></i>
+            <h3>Multi-Format</h3>
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                margin-top: 0.5rem;
+              "
+            >
+              Konversi media ke berbagai format seperti MP4, WEBM, dan MP3 untuk fleksibilitas penggunaan.
+            </p>
+          </div>
+          <div class="feature-box">
+            <i class="bi bi-journal-richtext feature-icon"></i>
+            <h3>Edukasi & Presentasi</h3>
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                margin-top: 0.5rem;
+              "
+            >
+              Cocok untuk guru dan siswa yang membutuhkan materi video offline untuk pembelajaran di kelas.
+            </p>
+          </div>
+          <div class="feature-box">
+            <i class="bi bi-shield-check feature-icon"></i>
+            <h3>Personal Backup</h3>
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                margin-top: 0.5rem;
+              "
+            >
+              Simpan konten kreasi Anda atau referensi penting di penyimpanan pribadi dengan aman.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer with Disclaimer -->
+    <footer class="modern-footer" style="text-align: center;">
+      <p>&copy; 2026 VidHub. All rights reserved.</p>
+    </footer>
+
+    <!-- Logic -->
+    <script>
+      class VidHubTool {
+        constructor() {
+          this.apiBaseURL = "/api"; // Pastikan sesuai dengan backend Anda
+          this.videoData = null;
+          this.selectedFormatId = null;
+          this.selectedQuality = null;
+          this.currentFilter = "all";
+
+          this.initializeElements();
+          this.attachEventListeners();
+          this.initPasteButton();
+        }
+
+        initializeElements() {
+          this.elements = {
+            videoUrl: document.getElementById("videoUrl"),
+            pasteBtn: document.getElementById("pasteBtn"),
+            fetchBtn: document.getElementById("fetchBtn"),
+            downloadBtn: document.getElementById("downloadBtn"),
+            loadingSpinner: document.getElementById("loadingSpinner"),
+            errorAlert: document.getElementById("errorAlert"),
+            errorMessage: document.getElementById("errorMessage"),
+            videoInfoSection: document.getElementById("videoInfoSection"),
+            videoThumbnail: document.getElementById("videoThumbnail"),
+            videoTitle: document.getElementById("videoTitle"),
+            videoUploader: document.getElementById("videoUploader"),
+            videoDuration: document.getElementById("videoDuration"),
+            formatList: document.getElementById("formatList"),
+            downloadSuccess: document.getElementById("downloadSuccess"),
+            qualityFilters: document.querySelectorAll(".tab-btn"),
+          };
+        }
+
+        initPasteButton() {
+          this.elements.pasteBtn.addEventListener("click", async () => {
+            try {
+              let text = "";
+              if (
+                navigator.clipboard &&
+                typeof navigator.clipboard.readText === "function"
+              ) {
+                text = await navigator.clipboard.readText();
+              } else {
+                this.showToast(
+                  "Akses clipboard tidak tersedia. Silakan tempel manual.",
+                  "warning",
+                );
+                return;
+              }
+              this.elements.videoUrl.value = text;
+              const originalIcon = this.elements.pasteBtn.innerHTML;
+              this.elements.pasteBtn.innerHTML =
+                '<i class="bi bi-check-lg"></i>';
+              setTimeout(() => {
+                this.elements.pasteBtn.innerHTML = originalIcon;
+              }, 1500);
+            } catch (err) {
+              this.showToast(
+                "Gagal membaca clipboard. Izinkan akses atau tempel manual.",
+                "warning",
+              );
+            }
+          });
+        }
+
+        attachEventListeners() {
+          this.elements.fetchBtn.addEventListener("click", () =>
+            this.fetchVideoInfo(),
+          );
+          this.elements.downloadBtn.addEventListener("click", () =>
+            this.startDownload(),
+          );
+          this.elements.videoUrl.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") this.fetchVideoInfo();
+          });
+          this.elements.qualityFilters.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              this.elements.qualityFilters.forEach((b) =>
+                b.classList.remove("active"),
+              );
+              e.currentTarget.classList.add("active");
+              const quality = e.currentTarget.dataset.quality;
+              this.filterFormats(quality);
+              this.updateDownloadButtonState();
+            });
+          });
+        }
+
+        async fetchVideoInfo() {
+          const url = this.elements.videoUrl.value.trim();
+          if (!url) {
+            this.showError("Mohon masukkan URL media terlebih dahulu.");
+            return;
+          }
+          if (!this.isValidURL(url)) {
+            this.showError(
+              "Format URL tidak valid. Periksa kembali tautan Anda.",
+            );
+            return;
+          }
+
+          this.showLoading(true);
+          this.hideError();
+          this.elements.videoInfoSection.style.display = "none";
+
+          try {
+            // Simulasi fetch atau panggil API asli
+            const response = await fetch(
+              `${this.apiBaseURL}/video/info?url=${encodeURIComponent(url)}`,
+            );
+            const data = await response.json();
+
+            if (!response.ok) {
+              const errorMsg = this.getUserFriendlyErrorMessage(response.status, data);
+              throw new Error(errorMsg);
+            }
+
+            this.videoData = data;
+            this.displayVideoInfo();
+            this.renderFormats();
+          } catch (error) {
+            console.error("Error:", error);
+            this.showError(error.message || "Tidak bisa mengambil informasi media. Periksa tautan atau coba URL lain.");
+          } finally {
+            this.showLoading(false);
+          }
+        }
+
+        displayVideoInfo() {
+          this.elements.videoThumbnail.src = this.videoData.thumbnail_url;
+          this.elements.videoTitle.textContent = this.videoData.title;
+          this.elements.videoUploader.textContent = this.videoData.uploader;
+          this.elements.videoDuration.textContent = this.formatDuration(
+            this.videoData.duration,
+          );
+          this.elements.videoInfoSection.style.display = "block";
+          // Reset format selection
+          this.selectedFormatId = null;
+          this.selectedQuality = null;
+          this.elements.downloadBtn.disabled = true;
+          this.elements.downloadSuccess.style.display = "none";
+        }
+
+        renderFormats() {
+          this.elements.formatList.innerHTML = "";
+          if (!this.videoData.formats || this.videoData.formats.length === 0) {
+            this.elements.formatList.innerHTML =
+              '<p class="text-center text-muted w-100" style="grid-column:1/-1; padding:2rem; text-align:center; color:var(--text-muted);">Tidak ada format yang tersedia untuk media ini.</p>';
+            this.elements.downloadBtn.disabled = true;
+            return;
+          }
+          const uniqueFormats = this.getUniqueFormats();
+          if (uniqueFormats.length === 0) {
+            this.elements.formatList.innerHTML =
+              '<p class="text-center text-muted w-100" style="grid-column:1/-1; padding:2rem; text-align:center; color:var(--text-muted);">Tidak ada format unik yang tersedia.</p>';
+            this.elements.downloadBtn.disabled = true;
+            return;
+          }
+          uniqueFormats.forEach((format, index) => {
+            const card = this.createFormatCard(format, index);
+            this.elements.formatList.appendChild(card);
+          });
+          this.filterFormats("all");
+          this.updateDownloadButtonState();
+        }
+
+        getUniqueFormats() {
+          const seen = new Set();
+          return this.videoData.formats.filter((fmt) => {
+            const key = `${fmt.quality}-${fmt.resolution}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+        }
+
+        createFormatCard(format, index) {
+          const card = document.createElement("div");
+          card.className = "format-card";
+          // Set quality attribute untuk filter
+          const qualityLabel = format.quality || "Unknown";
+          card.dataset.quality = qualityLabel;
+          
+          let iconClass = "bi-camera-video";
+          if (qualityLabel === "Audio") iconClass = "bi-music-note-beamed";
+          else if (format.resolution && format.resolution.includes("1080"))
+            iconClass = "bi-badge-hd";
+
+          const sizeLabel = format.file_size
+            ? this.formatBytes(format.file_size)
+            : "N/A";
+          card.innerHTML = `
+            <input type="radio" name="format" id="format_${index}" value="${format.format_id}">
+            <label class="format-tile" for="format_${index}">
+              <i class="bi bi-check-circle-fill check-indicator"></i>
+              <div class="tile-content">
+                <div class="format-quality-badge"><i class="bi ${iconClass}"></i> ${qualityLabel}</div>
+                <div class="format-details"><span>${format.resolution || "Audio Only"}</span><span style="opacity: 0.6">.${format.ext || "mp4"}</span></div>
+                <div class="format-size">${sizeLabel}</div>
+              </div>
+            </label>
+          `;
+          const radio = card.querySelector('input[type="radio"]');
+          radio.dataset.quality = qualityLabel;
+          radio.addEventListener("change", () => {
+            this.selectFormat(format.format_id, card, qualityLabel);
+          });
+          return card;
+        }
+
+        selectFormat(formatId, card, quality) {
+          this.selectedFormatId = formatId;
+          this.selectedQuality = quality || "Unknown";
+          this.elements.downloadBtn.disabled = false;
+        }
+
+        filterFormats(quality) {
+          this.currentFilter = quality;
+          const cards = document.querySelectorAll(".format-card");
+          let visibleCount = 0;
+          
+          cards.forEach((card) => {
+            const radio = card.querySelector('input[type="radio"]');
+            const cardQuality = radio ? radio.dataset.quality : card.getAttribute("data-quality");
+            const show = quality === "all" || cardQuality === quality;
+            card.style.display = show ? "block" : "none";
+            if (show) visibleCount++;
+          });
+          
+          // Jika tidak ada format yang cocok dengan filter, tampilkan pesan
+          if (visibleCount === 0) {
+            if (this.elements.formatList.querySelector(".no-format-message")) {
+              return;
+            }
+            const message = document.createElement("p");
+            message.className = "no-format-message";
+            message.style.cssText = "text-align:center; color:var(--text-muted); grid-column:1/-1; padding:2rem;";
+            message.textContent = "Tidak ada format tersedia untuk kualitas ini.";
+            this.elements.formatList.appendChild(message);
+          } else {
+            // Hapus message jika ada
+            const msg = this.elements.formatList.querySelector(".no-format-message");
+            if (msg) msg.remove();
+          }
+          
+          // Reset selected format jika tidak sesuai dengan filter
+          const selectedInput = this.elements.formatList.querySelector('input[type="radio"]:checked');
+          if (selectedInput) {
+            const selectedQuality = selectedInput.dataset.quality;
+            if (quality !== "all" && selectedQuality !== quality) {
+              selectedInput.checked = false;
+              this.selectedFormatId = null;
+              this.elements.downloadBtn.disabled = true;
+            }
+          }
+        }
+        
+        updateDownloadButtonState() {
+          // Check if there's a visible and selectable format
+          const visibleCards = Array.from(document.querySelectorAll(".format-card"))
+            .filter(card => card.style.display !== "none");
+          
+          if (visibleCards.length === 0) {
+            this.elements.downloadBtn.disabled = true;
+            this.selectedFormatId = null;
+          } else if (this.selectedFormatId) {
+            this.elements.downloadBtn.disabled = false;
+          } else {
+            this.elements.downloadBtn.disabled = true;
+          }
+        }
+
+        async startDownload() {
+          if (!this.selectedFormatId) {
+            this.showError("Silakan pilih format media terlebih dahulu.");
+            return;
+          }
+          const selectedFormat = this.videoData.formats.find(
+            (fmt) => fmt.format_id === this.selectedFormatId,
+          );
+          const fileSize = selectedFormat ? selectedFormat.file_size : 0;
+          const downloadRequest = {
+            url: this.elements.videoUrl.value.trim(),
+            format_id: this.selectedFormatId,
+            quality: this.selectedQuality,
+            file_size: fileSize,
+          };
+          this.elements.downloadBtn.disabled = true;
+
+          Swal.fire({
+            title: "Sedang Memproses Arsip...",
+            html: `<div style="text-align:left; color:#94a3b8; font-size:0.9rem;"><p>Mengonversi format: <strong style="color:#fff">${this.selectedQuality}</strong></p><p>Mohon tunggu sebentar...</p></div>`,
+            icon: "info",
+            background: "#1e293b",
+            color: "#fff",
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
+          try {
+            const response = await fetch(`${this.apiBaseURL}/download`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(downloadRequest),
+            });
+            const data = await response.json();
+            
+            if (!response.ok) {
+              const errorMsg = this.getUserFriendlyErrorMessage(response.status, data);
+              throw new Error(errorMsg);
+            }
+
+            Swal.close();
+            const a = document.createElement("a");
+            a.href = data.download_link;
+            a.setAttribute("download", "");
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            this.elements.downloadSuccess.style.display = "flex";
+            setTimeout(() => {
+              this.elements.downloadSuccess.style.display = "none";
+              this.elements.downloadBtn.disabled = false;
+            }, 5000);
+          } catch (error) {
+            Swal.fire({
+              title: "Tidak Bisa Memproses",
+              text: error.message || "Terjadi kesalahan saat memproses. Silakan coba lagi atau gunakan format lain.",
+              icon: "warning",
+              background: "#1e293b",
+              color: "#fff",
+              confirmButtonColor: "#6366f1",
+            });
+            this.elements.downloadBtn.disabled = false;
+          }
+        }
+        
+        getUserFriendlyErrorMessage(statusCode, data) {
+          // Handle specific HTTP status codes dan error types
+          const errorCode = data.error || "";
+          const originalMsg = data.message || "";
+
+          // Quota errors
+          if (statusCode === 402 || errorCode === "quota_exhausted") {
+            return "Kuota unduhan harian Anda sudah terpenuhi. Silakan coba lagi besok atau gunakan format dengan ukuran lebih kecil (Audio only).";
+          }
+
+          // File too large
+          if (statusCode === 413 || errorCode === "file_too_large") {
+            const maxSize = data.max_size ? Math.round(data.max_size / (1024 * 1024)) : 100;
+            return `File media ini terlalu besar (max ${maxSize}MB). Coba pilih kualitas lebih rendah atau format audio saja.`;
+          }
+
+          // Rate limit / Too many requests
+          if (statusCode === 429 || errorCode === "rate_limit_exceeded") {
+            return "Terlalu banyak permintaan dalam waktu singkat. Tunggu beberapa menit sebelum mencoba lagi.";
+          }
+
+          // Invalid domain
+          if (errorCode === "invalid_domain") {
+            return "Sumber media ini tidak didukung. Gunakan tautan dari platform seperti YouTube, Facebook, TikTok, atau Instagram.";
+          }
+
+          // Invalid format
+          if (errorCode === "invalid_format") {
+            return "Format yang dipilih tidak valid untuk media ini. Coba dengan format atau kualitas yang berbeda.";
+          }
+
+          // Download/Processing failed
+          if (statusCode === 500 || errorCode === "download_failed") {
+            return "Gagal memproses media. Periksa tautan atau coba dengan video/media yang berbeda.";
+          }
+
+          // Bad request / Invalid URL
+          if (statusCode === 400 || errorCode === "invalid_request") {
+            return "Tautan media tidak valid atau tidak dapat diakses. Periksa kembali URL Anda.";
+          }
+
+          // Server error
+          if (statusCode >= 500) {
+            return "Layanan sedang mengalami gangguan teknis. Silakan coba lagi dalam beberapa saat.";
+          }
+
+          // Default error message
+          return originalMsg || "Tidak bisa memproses arsip. Silakan coba lagi atau gunakan format lain.";
+        }
+
+        showError(message) {
+          this.elements.errorMessage.textContent = message;
+          this.elements.errorAlert.style.display = "flex";
+        }
+        hideError() {
+          this.elements.errorAlert.style.display = "none";
+        }
+        showLoading(show) {
+          this.elements.loadingSpinner.style.display = show ? "block" : "none";
+          this.elements.fetchBtn.disabled = show;
+        }
+        showToast(message, type = "info") {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: "#1e293b",
+            color: "#fff",
+          });
+          Toast.fire({ icon: type, title: message });
+        }
+        isValidURL(string) {
+          try {
+            new URL(string);
+            return true;
+          } catch (_) {
+            return false;
+          }
+        }
+        formatDuration(seconds) {
+          if (!seconds) return "Unknown";
+          const h = Math.floor(seconds / 3600);
+          const m = Math.floor((seconds % 3600) / 60);
+          const s = seconds % 60;
+          return `${h ? h + "j " : ""}${m}m ${s}s`;
+        }
+        formatBytes(bytes) {
+          if (!bytes) return "Unknown";
+          const sizes = ["Bytes", "KB", "MB", "GB"];
+          const i = Math.floor(Math.log(bytes) / Math.log(1024));
+          return (
+            Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i]
+          );
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        window.vidHubTool = new VidHubTool();
+      });
+    </script>
+  </body>
+</html>

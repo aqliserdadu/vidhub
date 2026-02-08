@@ -1,0 +1,134 @@
+version: "3.9"
+
+services:
+  # ============================
+  # Go Backend Service (PROD)
+  # ============================
+  backend:
+    container_name: video-downloader-backend
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      # --- Server Configuration ---
+      SERVER_PORT: 8080
+      SERVER_HOST: 0.0.0.0
+      SERVER_TIMEOUT: 300
+
+      # --- Storage Configuration ---
+      DOWNLOAD_DIR: /app/downloads
+      MAX_VIDEO_SIZE_MB: 100
+      MAX_FILENAME_LENGTH: 200
+      STORAGE_CLEANUP_INTERVAL: 3600
+      FILE_TTL_SECONDS: 86400
+
+      # --- Python Worker Configuration ---
+      PYTHON_WORKER_HOST: python-worker
+      PYTHON_WORKER_PORT: 5000
+      PYTHON_WORKER_TIMEOUT: 60
+
+      # --- Logging Configuration ---
+      LOG_LEVEL: info
+      LOG_FILE: /app/log/app.log
+      LOG_ROTATION_SIZE: 104857600
+      LOG_MAX_BACKUPS: 5
+      LOG_MAX_AGE: 14
+
+      # --- Security Configuration ---
+      ALLOWED_DOMAINS: youtube.com,youtu.be,vimeo.com,facebook.com,m.facebook.com,fb.watch,tiktok.com,instagram.com,twitter.com,x.com
+      REQUEST_TIMEOUT: 60
+
+      # --- Quota Limiting ---
+      QUOTA_ENABLED: "true"
+      QUOTA_DAILY_LIMIT_MB: 100
+      QUOTA_RESET_HOUR: 0
+      QUOTA_RESET_MINUTE: 0
+
+      # --- Rate Limiting ---
+      RATELIMIT_ENABLED: "true"
+      RATELIMIT_REQUESTS_PER_MINUTE: 60
+      RATELIMIT_BURST_SIZE: 10
+      RATELIMIT_CLEANUP_INTERVAL: 1800
+
+    volumes:
+      - ./downloads:/app/downloads
+      - ./log:/app/log
+
+    depends_on:
+      - python-worker
+
+    networks:
+      - video-downloader
+
+    restart: always
+
+    # --- HARD Resource Limit (Production) ---
+    mem_limit: 1g
+    cpus: 1.0
+    pids_limit: 256
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ============================
+  # Python Worker Service (PROD)
+  # ============================
+  python-worker:
+    container_name: video-downloader-worker
+
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+
+    ports:
+      - "5000:5000"
+
+    environment:
+      # --- Server Configuration ---
+      PYTHON_WORKER_HOST: 0.0.0.0
+      PYTHON_WORKER_PORT: 5000
+
+      # --- Storage Configuration ---
+      DOWNLOAD_DIR: /app/downloads
+      MAX_VIDEO_SIZE_MB: 300
+      MAX_FILENAME_LENGTH: 200
+
+      # --- Logging Configuration ---
+      LOG_LEVEL: INFO
+
+      # --- Security Configuration ---
+      ALLOWED_DOMAINS: youtube.com,youtu.be,vimeo.com,facebook.com,m.facebook.com,fb.watch,tiktok.com,instagram.com,twitter.com,x.com
+
+    volumes:
+      - ./downloads:/app/downloads
+      - ./log:/app/log
+
+    networks:
+      - video-downloader
+
+    restart: always
+
+    # --- HARD Resource Limit (Production) ---
+    mem_limit: 3g
+    cpus: 2.0
+    pids_limit: 512
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+networks:
+  video-downloader:
+    driver: bridge
