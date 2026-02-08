@@ -1396,13 +1396,13 @@
 
           // Quota errors
           if (statusCode === 402 || errorCode === "quota_exhausted") {
-            return "Kuota unduhan harian Anda sudah terpenuhi. Silakan coba lagi besok atau gunakan format dengan ukuran lebih kecil (Audio only).";
+            return "Kuota unduhan harian Anda sudah terpenuhi. Silakan coba lagi besok atau pilih size yang lebih kecil.";
           }
 
           // File too large
           if (statusCode === 413 || errorCode === "file_too_large") {
             const maxSize = data.max_size ? Math.round(data.max_size / (1024 * 1024)) : 100;
-            return `File media ini terlalu besar (max ${maxSize}MB). Coba pilih kualitas lebih rendah atau format audio saja.`;
+            return `File media ini terlalu besar (max ${maxSize}MB). Coba pilih kualitas lebih rendah atau size yang lebih kecil.`;
           }
 
           // Rate limit / Too many requests
@@ -1412,7 +1412,7 @@
 
           // Invalid domain
           if (errorCode === "invalid_domain") {
-            return "Sumber media ini tidak didukung. Gunakan tautan dari platform seperti YouTube, Facebook, TikTok, atau Instagram.";
+            return "Sumber media ini tidak didukung. Gunakan tautan dari platform seperti YouTube, X, Facebook, TikTok, atau Instagram.";
           }
 
           // Invalid format
@@ -1420,6 +1420,9 @@
             return "Format yang dipilih tidak valid untuk media ini. Coba dengan format atau kualitas yang berbeda.";
           }
 
+          if (errorCode === "quota_limit") {
+            return "Layanan sedang sibuk. Silakan gunakan size yang lebih kecil.";
+          }
           // Download/Processing failed
           if (statusCode === 500 || errorCode === "download_failed") {
             return "Gagal memproses media. Periksa tautan atau coba dengan video/media yang berbeda.";
