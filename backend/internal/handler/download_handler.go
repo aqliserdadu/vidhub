@@ -70,6 +70,20 @@ func (h *DownloadHandler) StartDownload(c *gin.Context) {
 		return
 	}
 
+	// ✅ Check server configuration: QUOTA_DAILY_LIMIT_MB must be >= MAX_VIDEO_SIZE_MB
+	// If daily quota is less than max file size, users can't download files successfully
+	if h.cfg.Quota.Enabled && h.cfg.Quota.DailyLimitMB < int64(h.cfg.Storage.MaxVideoSizeMB) {
+		logger.Logger.Error("Server configuration error: daily quota limit is less than max video size",
+			zap.Int64("daily_limit_mb", h.cfg.Quota.DailyLimitMB),
+			zap.Int64("max_video_size_mb", int64(h.cfg.Storage.MaxVideoSizeMB)))
+		c.JSON(http.StatusServiceUnavailable, model.ErrorResponse{
+			Error:   "quota_limit",
+			Message: "Server is currently under maintenance. Please try again later.",
+			Code:    http.StatusServiceUnavailable,
+		})
+		return
+	}
+
 	// ✅ Validate file size BEFORE starting download
 	// This prevents worker from processing oversized files
 	if req.FileSize > 0 {
